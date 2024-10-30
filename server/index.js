@@ -25,6 +25,8 @@ const httpServer = http.createServer(app);
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const SESSION_SECRET = process.env.SESSION_SECRET;
+const CLIENT_URL = process.env.CLIENT_URL;
+const PORT = process.env.PORT || 4000;
 
 const MongoDBStore = connectMongo(session);
 const store = new MongoDBStore({
@@ -62,7 +64,7 @@ await server.start();
 app.use(
 	"/",
 	cors({
-		origin: "http://localhost:3000",
+		origin: [CLIENT_URL],
 		credentials: true,
 	}),
 	express.json(),
@@ -73,7 +75,7 @@ app.use(
 	})
 );
 
-const PORT = 4000;
+
 await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 await connectDB();
 
