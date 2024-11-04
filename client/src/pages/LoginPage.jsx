@@ -28,6 +28,10 @@ const LoginPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		if (!loginData.username || !loginData.password) {
+			return toast.error("Please fill in all fields");
+		}
+
 		try {
 			await login({
 				variables: {
@@ -40,7 +44,7 @@ const LoginPage = () => {
 		}
 	};
 
-	const submitIsDisabled = !(loginData?.password && loginData.username);
+	const submitIsDisabled = !(loginData?.password && loginData?.username);
 
 	return (
 		<div className="flex justify-center items-center h-screen">

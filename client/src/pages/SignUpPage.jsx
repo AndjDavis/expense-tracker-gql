@@ -23,6 +23,7 @@ const SignUpPage = () => {
 		refetchQueries: ["GetAuthenticatedUser"],
 	});
 	const [signUpData, setSignUpData] = useState(initialState);
+	const { username, name, password, gender } = signUpData;
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -34,6 +35,11 @@ const SignUpPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
+		if (!username || !name || !password || !gender) {
+			return toast.error("Please fill in all fields");
+		}
+
 		try {
 			await signup({
 				variables: {
@@ -46,22 +52,10 @@ const SignUpPage = () => {
 		}
 	};
 
-	const isMale = signUpData?.gender === MALE;
-	const isFemale = signUpData?.gender === FEMALE;
+	const isMale = gender === MALE;
+	const isFemale = gender === FEMALE;
 	const radioSelectionRequired = !(isMale || isFemale);
-
-	const submitIsDisabled = "";
-	// const signUpButton = loading ? (
-	// 	<Spinner />
-	// ) : (
-	// 	<button
-	// 		type="submit"
-	// 		className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-	// 		disabled={loading}
-	// 	>
-	// 		Sign Up
-	// 	</button>
-	// );
+	const submitIsDisabled = !(username && name && password && gender);
 
 	return (
 		<div className="h-screen flex justify-center items-center">
