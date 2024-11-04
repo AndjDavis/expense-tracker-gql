@@ -1,4 +1,12 @@
-const InputField = ({ label, id, name, type = "text", onChange, value }) => {
+const InputField = ({
+	label,
+	id,
+	name,
+	type = "text",
+	onChange,
+	required = true,
+	value,
+}) => {
 	return (
 		<div>
 			<label
@@ -13,6 +21,7 @@ const InputField = ({ label, id, name, type = "text", onChange, value }) => {
 				type={type}
 				name={name}
 				value={value}
+				required={required}
 				onChange={onChange}
 			/>
 		</div>

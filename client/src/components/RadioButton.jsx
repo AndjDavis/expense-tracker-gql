@@ -1,4 +1,13 @@
-const RadioButton = ({ checked, id, label, name, onChange, value, }) => {
+const RadioButton = ({
+	checked,
+	id,
+	label,
+	name,
+	onChange,
+	value,
+	required = true,
+}) => {
+	const isRequired = required && !checked;
 	return (
 		<div className="inline-flex items-center">
 			<label
@@ -13,6 +22,7 @@ const RadioButton = ({ checked, id, label, name, onChange, value, }) => {
 					value={value}
 					onChange={onChange}
 					checked={checked}
+					required={isRequired}
 				/>
 				<span className="absolute text-gray-900 transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
 					<svg
