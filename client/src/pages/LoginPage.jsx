@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import toast from "react-hot-toast";
 
+import SubmitButton from "../components/SubmitButton";
 import InputField from "../components/InputField";
+import { LOGIN } from "../graphql/mutations/user.mutation";
 
 const initialState = {
-	username: "",
-	password: "",
+	username: "dbow",
+	password: "testtest",
 };
 
 const LoginPage = () => {
+	const [login, { loading }] = useMutation(LOGIN, {
+		refetchQueries: ["GetAuthenticatedUser"],
+	});
 	const [loginData, setLoginData] = useState(initialState);
 
 	const handleChange = (e) => {
@@ -19,10 +26,21 @@ const LoginPage = () => {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log(loginData);
+		try {
+			await login({
+				variables: {
+					input: loginData,
+				},
+			});
+		} catch (error) {
+			console.error("Login error: ", error);
+			toast.error(error.message);
+		}
 	};
+
+	const submitIsDisabled = !(loginData?.password && loginData.username);
 
 	return (
 		<div className="flex justify-center items-center h-screen">
@@ -56,14 +74,11 @@ const LoginPage = () => {
 								onChange={handleChange}
 							/>
 							<div>
-								<button
-									type="submit"
-									className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300
-										disabled:opacity-50 disabled:cursor-not-allowed
-									"
-								>
-									Login
-								</button>
+								<SubmitButton
+									text="Login"
+									loading={loading}
+									disabled={submitIsDisabled}
+								/>
 							</div>
 						</form>
 						<div className="mt-4 text-sm text-gray-600 text-center">

@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import toast from "react-hot-toast";
 
 import RadioButton from "../components/RadioButton";
 import InputField from "../components/InputField";
+import SubmitButton from "../components/SubmitButton";
+import { SIGN_UP } from "../graphql/mutations/user.mutation";
+
+const MALE = "male";
+const FEMALE = "female";
 
 const initialState = {
 	name: "",
@@ -12,20 +19,49 @@ const initialState = {
 };
 
 const SignUpPage = () => {
+	const [signup, { loading }] = useMutation(SIGN_UP, {
+		refetchQueries: ["GetAuthenticatedUser"],
+	});
 	const [signUpData, setSignUpData] = useState(initialState);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-        setSignUpData((prev) => ({
-            ...prev,
-            [name]: value,
-        }))
+		setSignUpData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log(signUpData);
+		try {
+			await signup({
+				variables: {
+					input: signUpData,
+				},
+			});
+		} catch (error) {
+			console.error("Sign up error: ", error);
+			toast.error(error.message);
+		}
 	};
+
+	const isMale = signUpData?.gender === MALE;
+	const isFemale = signUpData?.gender === FEMALE;
+	const radioSelectionRequired = !(isMale || isFemale);
+
+	const submitIsDisabled = "";
+	// const signUpButton = loading ? (
+	// 	<Spinner />
+	// ) : (
+	// 	<button
+	// 		type="submit"
+	// 		className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+	// 		disabled={loading}
+	// 	>
+	// 		Sign Up
+	// 	</button>
+	// );
 
 	return (
 		<div className="h-screen flex justify-center items-center">
@@ -72,7 +108,8 @@ const SignUpPage = () => {
 									name="gender"
 									value="male"
 									onChange={handleChange}
-									checked={signUpData.gender === "male"}
+									checked={isMale}
+									required={radioSelectionRequired}
 								/>
 								<RadioButton
 									id="female"
@@ -80,19 +117,20 @@ const SignUpPage = () => {
 									name="gender"
 									value="female"
 									onChange={handleChange}
-									checked={signUpData.gender === "female"}
+									checked={isFemale}
+									required={radioSelectionRequired}
 								/>
 							</div>
 
 							<div>
-								<button
-									type="submit"
-									className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-								>
-									Sign Up
-								</button>
+								<SubmitButton
+									text="Sign Up"
+									loading={loading}
+									disabled={submitIsDisabled}
+								/>
 							</div>
 						</form>
+
 						<div className="mt-4 text-sm text-gray-600 text-center">
 							<p>
 								Already have an account?{" "}
