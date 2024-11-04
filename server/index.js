@@ -62,7 +62,7 @@ const server = new ApolloServer({
 await server.start();
 
 app.use(
-	"/",
+	"/graphql",
 	cors({
 		origin: [CLIENT_URL],
 		credentials: true,
