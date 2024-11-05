@@ -6,6 +6,7 @@ import { GET_TRANSACTIONS } from "../graphql/queries/transaction.query";
 
 const Cards = () => {
 	const { data, loading } = useQuery(GET_TRANSACTIONS);
+
 	let content = (
 		<p className="text-2xl font-bold text-center w-full">
 			No transaction history found.

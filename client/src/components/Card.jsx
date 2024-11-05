@@ -11,6 +11,7 @@ import { HiPencilAlt } from "react-icons/hi";
 
 import Spinner from "./Spinner";
 import { DELETE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
+import { useAuth } from "../hooks/useAuth";
 import { formatDate } from "../utils/format";
 
 const categoryColorMap = {
@@ -20,9 +21,10 @@ const categoryColorMap = {
 	// Add more categories and corresponding color classes as needed
 };
 
-const Card = ({ transaction, authUser }) => {
+const Card = ({ transaction }) => {
+	const { authUser } = useAuth();
 	const [deleteTransaction, { loading }] = useMutation(DELETE_TRANSACTION, {
-		refetchQueries: ["GetTransactions"],
+		refetchQueries: ["GetTransactions", "GetTransactionStatistics"],
 	});
 
 	const {

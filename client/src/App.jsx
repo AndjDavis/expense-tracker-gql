@@ -14,9 +14,8 @@ import PersistLogin from "./routes/PersistLogin";
 import { useAuth } from "./hooks/useAuth";
 
 function App() {
-	const { loading, data } = useAuth();
+	const { loading, authUser } = useAuth();
 	if (loading) return <HomeSkeleton />;
-	const authUser = data?.authUser;
 	return (
 		<>
 			{authUser && <Header />}
