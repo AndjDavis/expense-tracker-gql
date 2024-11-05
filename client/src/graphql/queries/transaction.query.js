@@ -12,7 +12,7 @@ export const GET_TRANSACTIONS = gql`
 			date
 		}
 	}
-`; // `;
+`;
 
 export const GET_TRANSACTION = gql`
 	query GetTransaction($transactionId: ID!) {
@@ -24,6 +24,15 @@ export const GET_TRANSACTION = gql`
 			amount
 			location
 			date
+		}
+	}
+`;
+
+export const GET_TRANSACTION_STATISTICS = gql`
+	query GetTransactionStatistics {
+		categoryStatistics {
+			category
+			totalAmount
 		}
 	}
 `;
