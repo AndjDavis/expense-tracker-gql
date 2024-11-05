@@ -1,47 +1,24 @@
 import { useMutation } from "@apollo/client";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
 import { MdLogout } from "react-icons/md";
 
+import DoughnutChart from "../components/ui/DoughnutChart";
 import Cards from "../components/Cards";
 import Spinner from "../components/Spinner";
 import TransactionForm from "../components/TransactionForm";
+
 import { LOGOUT } from "../graphql/mutations/user.mutation";
-
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-const chartData = {
-	labels: ["Saving", "Expense", "Investment"],
-	datasets: [
-		{
-			label: "%",
-			data: [13, 8, 3],
-			backgroundColor: [
-				"rgba(75, 192, 192)",
-				"rgba(255, 99, 132)",
-				"rgba(54, 162, 235)",
-			],
-			borderColor: [
-				"rgba(75, 192, 192)",
-				"rgba(255, 99, 132)",
-				"rgba(54, 162, 235, 1)",
-			],
-			borderWidth: 1,
-			borderRadius: 30,
-			spacing: 10,
-			cutout: 130,
-		},
-	],
-};
+import { useAuth } from "../hooks/useAuth";
 
 const HomePage = () => {
-	const [logout, { loading }] = useMutation(LOGOUT, {
+	const { authUser } = useAuth();
+	const [logout, { loading, client }] = useMutation(LOGOUT, {
 		refetchQueries: ["GetAuthenticatedUser"],
 	});
 
 	const handleLogout = async () => {
 		try {
 			await logout();
+			client.resetStore();
 		} catch (error) {
 			console.error("Error logging out:", error);
 			toast.error(error.message);
@@ -65,7 +42,7 @@ const HomePage = () => {
 						Spend wisely, track wisely
 					</p>
 					<img
-						src={"https://tecdn.b-cdn.net/img/new/avatars/2.webp"}
+						src={authUser?.profilePicture}
 						className="w-11 h-11 rounded-full border cursor-pointer"
 						alt="Avatar"
 					/>
@@ -73,7 +50,7 @@ const HomePage = () => {
 				</div>
 				<div className="flex flex-wrap w-full justify-center items-center gap-6">
 					<div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]">
-						<Doughnut data={chartData} />
+						<DoughnutChart />
 					</div>
 
 					<TransactionForm />
