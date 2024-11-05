@@ -1,4 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
+import toast from "react-hot-toast";
+
+import TransactionFormSkeleton from "../components/skeletons/TransactionFormSkeleton";
+import { GET_TRANSACTION } from "../graphql/queries/transaction.query";
+import { UPDATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
+import * as constants from "../utils/constants";
 
 const initialState = {
 	description: "",
@@ -10,22 +18,64 @@ const initialState = {
 };
 
 const TransactionPage = () => {
+	const { id: transactionId } = useParams();
+
+	const { loading: loadingTransaction, data } = useQuery(GET_TRANSACTION, {
+		variables: { transactionId },
+	});
+
+	const [updateTransaction, { loading: loadingUpdate }] =
+		useMutation(UPDATE_TRANSACTION);
+
 	const [formData, setFormData] = useState(initialState);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log("formData", formData);
+		const amount = parseFloat(formData.amount);
+		try {
+			await updateTransaction({
+				variables: {
+					input: {
+						...formData,
+						amount,
+						transactionId,
+					},
+				},
+			});
+			toast.success("Transaction updated successfully");
+		} catch (error) {
+			console.error("Error updating transaction", error);
+			toast.error(error.message);
+		}
 	};
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
-		setFormData((prevFormData) => ({
-			...prevFormData,
+		setFormData((prev) => ({
+			...prev,
 			[name]: value,
 		}));
 	};
 
-	// if (loading) return <TransactionFormSkeleton />;
+	useEffect(() => {
+		if (data?.transaction) {
+			const { transaction } = data;
+			const transactionDate = new Date(+transaction.date)
+				.toISOString()
+				.substring(0, 10);
+
+			setFormData({
+				description: transaction?.description || "",
+				paymentType: transaction?.paymentType || "",
+				category: transaction?.category || "",
+				amount: transaction?.amount || "",
+				location: transaction?.location || "",
+				date: transactionDate || "",
+			});
+		}
+	}, [data]);
+
+	if (loadingTransaction) return <TransactionFormSkeleton />;
 
 	return (
 		<div className="h-screen max-w-4xl mx-auto flex flex-col items-center">
@@ -52,6 +102,7 @@ const TransactionPage = () => {
 							type="text"
 							placeholder="Rent, Groceries, Salary, etc."
 							value={formData.description}
+							required
 							onChange={handleInputChange}
 						/>
 					</div>
@@ -72,9 +123,10 @@ const TransactionPage = () => {
 								name="paymentType"
 								onChange={handleInputChange}
 								defaultValue={formData.paymentType}
+								required
 							>
-								<option value={"card"}>Card</option>
-								<option value={"cash"}>Cash</option>
+								<option value={constants.PAYMENT_TYPE_CARD}>Card</option>
+								<option value={constants.PAYMENT_TYPE_CASH}>Cash</option>
 							</select>
 							<div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
 								<svg
@@ -103,10 +155,13 @@ const TransactionPage = () => {
 								name="category"
 								onChange={handleInputChange}
 								defaultValue={formData.category}
+								required
 							>
-								<option value={"saving"}>Saving</option>
-								<option value={"expense"}>Expense</option>
-								<option value={"investment"}>Investment</option>
+								<option value={constants.CATEGORY_SAVING}>Saving</option>
+								<option value={constants.CATEGORY_EXPENSE}>Expense</option>
+								<option value={constants.CATEGORY_INVESTMENT}>
+									Investment
+								</option>
 							</select>
 							<div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
 								<svg
@@ -135,6 +190,7 @@ const TransactionPage = () => {
 							type="number"
 							placeholder="150"
 							value={formData.amount}
+							required
 							onChange={handleInputChange}
 						/>
 					</div>
@@ -182,8 +238,9 @@ const TransactionPage = () => {
 
 				{/* SUBMIT BUTTON */}
 				<button
-					className="text-white font-bold w-full rounded px-4 py-2 bg-gradient-to-br from-pink-500 to-pink-500 hover:from-pink-600 hover:to-pink-600"
+					className="w-full text-white font-bold rounded px-4 py-2 bg-gradient-to-br from-pink-500 to-pink-500 hover:from-pink-600 hover:to-pink-600"
 					type="submit"
+					disabled={loadingUpdate}
 				>
 					Update Transaction
 				</button>

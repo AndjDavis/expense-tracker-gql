@@ -4,6 +4,7 @@ import { Doughnut } from "react-chartjs-2";
 import { MdLogout } from "react-icons/md";
 
 import Cards from "../components/Cards";
+import Spinner from "../components/Spinner";
 import TransactionForm from "../components/TransactionForm";
 import { LOGOUT } from "../graphql/mutations/user.mutation";
 
@@ -48,10 +49,10 @@ const HomePage = () => {
 	};
 
 	const logoutButton = loading ? (
-		<div className="w-6 h-6 border-t-2 border-b-2 mx-2 rounded-full animate-spin"></div>
+		<Spinner />
 	) : (
 		<MdLogout
-			className="mx-2 w-5 h-5 cursor-pointer"
+			className="mx-3 w-5 h-5 cursor-pointer"
 			onClick={handleLogout}
 		/>
 	);
@@ -59,7 +60,7 @@ const HomePage = () => {
 	return (
 		<>
 			<div className="flex flex-col gap-6 items-center max-w-7xl mx-auto z-20 relative justify-center">
-				<div className="flex items-center">
+				<div className="flex items-center gap-3">
 					<p className="md:text-4xl text-2xl lg:text-4xl font-bold text-center relative z-50 mb-4 mr-4 bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text">
 						Spend wisely, track wisely
 					</p>
@@ -71,7 +72,7 @@ const HomePage = () => {
 					{logoutButton}
 				</div>
 				<div className="flex flex-wrap w-full justify-center items-center gap-6">
-					<div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]  ">
+					<div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]">
 						<Doughnut data={chartData} />
 					</div>
 

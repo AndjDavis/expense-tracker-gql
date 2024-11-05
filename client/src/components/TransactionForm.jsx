@@ -1,7 +1,16 @@
+import { useMutation } from "@apollo/client";
+import toast from "react-hot-toast";
+
+import { CREATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
+import * as constants from "../utils/constants";
+
 const TransactionForm = () => {
+	const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION, {
+		refetchQueries: ["GetTransactions"],
+	});
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
 		const form = e.target;
 		const formData = new FormData(form);
 		const transactionData = {
@@ -12,7 +21,17 @@ const TransactionForm = () => {
 			location: formData.get("location"),
 			date: formData.get("date"),
 		};
-		console.log("transactionData", transactionData);
+
+		try {
+			await createTransaction({
+				variables: { input: transactionData },
+			});
+			form.reset();
+			toast.success("Transaction successfully created");
+		} catch (error) {
+			console.error("Create transaction error", error);
+			toast.error(error.message);
+		}
 	};
 
 	return (
@@ -54,9 +73,11 @@ const TransactionForm = () => {
 							className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 							id="paymentType"
 							name="paymentType"
+							required
+							defaultValue={constants.PAYMENT_TYPE_CARD}
 						>
-							<option value={"card"}>Card</option>
-							<option value={"cash"}>Cash</option>
+							<option value={constants.PAYMENT_TYPE_CARD}>Card</option>
+							<option value={constants.PAYMENT_TYPE_CASH}>Cash</option>
 						</select>
 						<div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
 							<svg
@@ -83,10 +104,12 @@ const TransactionForm = () => {
 							className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 							id="category"
 							name="category"
+							required
+							defaultValue={constants.CATEGORY_SAVING}
 						>
-							<option value={"saving"}>Saving</option>
-							<option value={"expense"}>Expense</option>
-							<option value={"investment"}>Investment</option>
+							<option value={constants.CATEGORY_SAVING}>Saving</option>
+							<option value={constants.CATEGORY_EXPENSE}>Expense</option>
+							<option value={constants.CATEGORY_INVESTMENT}>Investment</option>
 						</select>
 						<div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
 							<svg
@@ -114,6 +137,7 @@ const TransactionForm = () => {
 						name="amount"
 						type="number"
 						placeholder="150"
+						required
 					/>
 				</div>
 			</div>
@@ -128,7 +152,7 @@ const TransactionForm = () => {
 						Location
 					</label>
 					<input
-						className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+						className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
 						id="location"
 						name="location"
 						type="text"
@@ -148,21 +172,20 @@ const TransactionForm = () => {
 						type="date"
 						name="date"
 						id="date"
-						className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-[11px] px-4 mb-3 leading-tight focus:outline-none
-						 focus:bg-white"
+						className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-[11px] px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
 						placeholder="Select date"
+						required
 					/>
 				</div>
 			</div>
 
 			{/* SUBMIT BUTTON */}
 			<button
-				className="text-white font-bold w-full rounded px-4 py-2 bg-gradient-to-br
-          from-pink-500 to-pink-500 hover:from-pink-600 hover:to-pink-600
-						disabled:opacity-70 disabled:cursor-not-allowed"
+				className="text-white font-bold w-full rounded px-4 py-2 bg-gradient-to-br from-pink-500 to-pink-500 hover:from-pink-600 hover:to-pink-600 disabled:opacity-70 disabled:cursor-not-allowed"
 				type="submit"
+				disabled={loading}
 			>
-				Add Transaction
+				{loading ? "Loading" : "Add Transaction"}
 			</button>
 		</form>
 	);
