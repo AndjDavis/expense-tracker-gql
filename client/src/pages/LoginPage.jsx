@@ -1,21 +1,20 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useMutation } from "@apollo/client";
 import toast from "react-hot-toast";
 
 import SubmitButton from "../components/SubmitButton";
 import InputField from "../components/InputField";
-import { LOGIN } from "../graphql/mutations/user.mutation";
+import { useLogin } from "../hooks/useUserMutation";
 
+// TODO: Remove values;
 const initialState = {
 	username: "dbow",
 	password: "testtest",
 };
+// initialState.username = "trex"
 
 const LoginPage = () => {
-	const [login, { loading }] = useMutation(LOGIN, {
-		refetchQueries: ["GetAuthenticatedUser"],
-	});
+	const { login, loading } = useLogin();
 	const [loginData, setLoginData] = useState(initialState);
 
 	const handleChange = (e) => {

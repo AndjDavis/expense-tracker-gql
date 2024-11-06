@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useMutation } from "@apollo/client";
 import toast from "react-hot-toast";
 
 import { FaLocationDot } from "react-icons/fa6";
@@ -10,7 +9,7 @@ import { FaTrash } from "react-icons/fa";
 import { HiPencilAlt } from "react-icons/hi";
 
 import Spinner from "./Spinner";
-import { DELETE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
+import { useDeleteTransaction } from "../hooks/useTransactionMutation";
 import { formatDate } from "../utils/format";
 
 const categoryColorMap = {
@@ -21,9 +20,7 @@ const categoryColorMap = {
 };
 
 const Card = ({ transaction, authUser }) => {
-	const [deleteTransaction, { loading }] = useMutation(DELETE_TRANSACTION, {
-		refetchQueries: ["GetTransactions", "GetTransactionStatistics"],
-	});
+	const { deleteTransaction, loading } = useDeleteTransaction();
 
 	const {
 		amount,

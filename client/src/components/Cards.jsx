@@ -1,6 +1,6 @@
 import Card from "./Card";
 import Spinner from "./Spinner";
-import { useGetUserAndTransactions } from "../hooks/useGetUser";
+import { useGetUserAndTransactions } from "../hooks/useUserQuery";
 
 const Cards = () => {
 	const { authUser, transactions, loading } = useGetUserAndTransactions();

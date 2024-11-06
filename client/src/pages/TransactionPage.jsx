@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useMutation } from "@apollo/client";
 import toast from "react-hot-toast";
 
 import TransactionFormSkeleton from "../components/skeletons/TransactionFormSkeleton";
-import { UPDATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
 import { useGetTransaction } from "../hooks/useTransactionQuery";
+import { useUpdateTransaction } from "../hooks/useTransactionMutation";
 import * as constants from "../utils/constants";
 
 const initialState = {
@@ -22,13 +21,7 @@ const TransactionPage = () => {
 	const { transaction, loading: loadingTransaction } =
 		useGetTransaction(transactionId);
 
-	const [updateTransaction, { loading: loadingUpdate }] = useMutation(
-		UPDATE_TRANSACTION,
-		{
-			refetchQueries: ["GetTransactionStatistics"],
-		}
-	);
-
+	const { updateTransaction, loading: loadingUpdate } = useUpdateTransaction();
 	const [formData, setFormData] = useState(initialState);
 
 	const handleSubmit = async (e) => {

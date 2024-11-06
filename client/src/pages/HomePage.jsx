@@ -1,19 +1,17 @@
-import { useMutation } from "@apollo/client";
 import { MdLogout } from "react-icons/md";
+import toast from "react-hot-toast";
 
 import DoughnutChart from "../components/ui/DoughnutChart";
 import Cards from "../components/Cards";
 import Spinner from "../components/Spinner";
 import TransactionForm from "../components/TransactionForm";
 
-import { LOGOUT } from "../graphql/mutations/user.mutation";
-import { useAuth } from "../hooks/useAuth";
+import { useGetAuthenticatedUser } from "../hooks/useUserQuery";
+import { useLogout } from "../hooks/useUserMutation";
 
 const HomePage = () => {
-	const { authUser } = useAuth();
-	const [logout, { loading, client }] = useMutation(LOGOUT, {
-		refetchQueries: ["GetAuthenticatedUser"],
-	});
+	const { authUser } = useGetAuthenticatedUser();
+	const { logout, loading, client } = useLogout();
 
 	const handleLogout = async () => {
 		try {
