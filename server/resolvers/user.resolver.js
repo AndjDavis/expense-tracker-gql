@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
+import Transaction from "../models/transaction.model.js";
 
 const userResolver = {
 	Query: {
@@ -13,14 +14,14 @@ const userResolver = {
 			}
 		},
 		users: async (_, __, context) => {
-            try {
-                const users = await User.find().select("-password").lean();
-                return users;
-            } catch (error) {
-                console.error("Error in users query: ", error);
+			try {
+				const users = await User.find().select("-password").lean();
+				return users;
+			} catch (error) {
+				console.error("Error in users query: ", error);
 				throw new Error(error.message || "Internal server error");
-            }
-        },
+			}
+		},
 		user: async (_, { userId }) => {
 			try {
 				const user = await User.findById(userId).lean().exec();
@@ -101,6 +102,17 @@ const userResolver = {
 				return { message: "Logged out successfully" };
 			} catch (error) {
 				console.error("Error in logout:", error);
+				throw new Error(error.message || "Internal server error");
+			}
+		},
+	},
+	User: {
+		transactions: async (parent) => {
+			try {
+				const transactions = await Transaction.find({ userId: parent._id });
+				return transactions;
+			} catch (error) {
+				console.log("Error in user.transactions resolver: ", error);
 				throw new Error(error.message || "Internal server error");
 			}
 		},
