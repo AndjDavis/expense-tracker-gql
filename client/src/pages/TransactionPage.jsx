@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import toast from "react-hot-toast";
 
 import TransactionFormSkeleton from "../components/skeletons/TransactionFormSkeleton";
-import { GET_TRANSACTION } from "../graphql/queries/transaction.query";
 import { UPDATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
+import { useGetTransaction } from "../hooks/useTransactionQuery";
 import * as constants from "../utils/constants";
 
 const initialState = {
@@ -19,10 +19,8 @@ const initialState = {
 
 const TransactionPage = () => {
 	const { id: transactionId } = useParams();
-
-	const { loading: loadingTransaction, data } = useQuery(GET_TRANSACTION, {
-		variables: { transactionId },
-	});
+	const { transaction, loading: loadingTransaction } =
+		useGetTransaction(transactionId);
 
 	const [updateTransaction, { loading: loadingUpdate }] = useMutation(
 		UPDATE_TRANSACTION,
@@ -62,8 +60,7 @@ const TransactionPage = () => {
 	};
 
 	useEffect(() => {
-		if (data?.transaction) {
-			const { transaction } = data;
+		if (transaction?._id) {
 			const transactionDate = new Date(+transaction.date)
 				.toISOString()
 				.substring(0, 10);
@@ -77,7 +74,7 @@ const TransactionPage = () => {
 				date: transactionDate || "",
 			});
 		}
-	}, [data]);
+	}, [transaction]);
 
 	if (loadingTransaction) return <TransactionFormSkeleton />;
 
