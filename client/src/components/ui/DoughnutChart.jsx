@@ -72,11 +72,18 @@ const DoughnutChart = () => {
 	}, [data]);
 
 	let content = <Doughnut data={chartData} />;
+
 	if (loading) {
 		content = <Spinner />;
+	} else if (!data?.categoryStatistics?.length) {
+		return null;
 	}
 
-	return content;
+	return (
+		<div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]">
+			{content}
+		</div>
+	);
 };
 
 export default DoughnutChart;

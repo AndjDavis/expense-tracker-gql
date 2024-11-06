@@ -1,11 +1,9 @@
-import { useQuery } from "@apollo/client";
-
 import Card from "./Card";
 import Spinner from "./Spinner";
-import { GET_TRANSACTIONS } from "../graphql/queries/transaction.query";
+import { useGetUserAndTransactions } from "../hooks/useGetUser";
 
 const Cards = () => {
-	const { data, loading } = useQuery(GET_TRANSACTIONS);
+	const { authUser, transactions, loading } = useGetUserAndTransactions();
 
 	let content = (
 		<p className="text-2xl font-bold text-center w-full">
@@ -15,9 +13,10 @@ const Cards = () => {
 
 	if (loading) {
 		content = <Spinner />;
-	} else if (Array.isArray(data?.transactions) && data.transactions.length) {
-		content = data.transactions.map((transaction) => (
+	} else if (Array.isArray(transactions) && transactions.length) {
+		content = transactions.map((transaction) => (
 			<Card
+				authUser={authUser}
 				key={transaction._id}
 				transaction={transaction}
 			/>

@@ -34,6 +34,8 @@ const HomePage = () => {
 		/>
 	);
 
+	const userProfileUrl = authUser?.profilePicture || "";
+
 	return (
 		<>
 			<div className="flex flex-col gap-6 items-center max-w-7xl mx-auto z-20 relative justify-center">
@@ -42,17 +44,14 @@ const HomePage = () => {
 						Spend wisely, track wisely
 					</p>
 					<img
-						src={authUser?.profilePicture}
+						src={userProfileUrl}
 						className="w-11 h-11 rounded-full border cursor-pointer"
 						alt="Avatar"
 					/>
 					{logoutButton}
 				</div>
 				<div className="flex flex-wrap w-full justify-center items-center gap-6">
-					<div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]">
-						<DoughnutChart />
-					</div>
-
+					<DoughnutChart />
 					<TransactionForm />
 				</div>
 				<Cards />
