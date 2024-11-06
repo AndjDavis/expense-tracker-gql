@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
 import Spinner from "../Spinner";
-import { GET_TRANSACTION_STATISTICS } from "../../graphql/queries/transaction.query";
+import { useGetTransactionStatistics } from "../../hooks/useTransactionQuery";
 import * as constants from "../../utils/constants";
 
 const staticDataSet = {
@@ -38,17 +37,17 @@ const capitolizeCategory = (value) =>
 	value.charAt(0).toUpperCase() + value.slice(1);
 
 const DoughnutChart = () => {
-	const { data, loading } = useQuery(GET_TRANSACTION_STATISTICS);
+	const { categoryStatistics, loading } = useGetTransactionStatistics();
 	const [chartData, setChartData] = useState(chartDataInitialState);
 
 	useEffect(() => {
-		if (data?.categoryStatistics && Array.isArray(data.categoryStatistics)) {
+		if (categoryStatistics && Array.isArray(categoryStatistics)) {
 			setChartData((prev) => {
 				const newLabels = [];
 				const newData = [];
 				const newColorScheme = [];
 
-				data.categoryStatistics.forEach(({ category, totalAmount }) => {
+				categoryStatistics.forEach(({ category, totalAmount }) => {
 					const label = capitolizeCategory(category);
 					newLabels.push(label);
 					newData.push(totalAmount);
@@ -69,13 +68,12 @@ const DoughnutChart = () => {
 				};
 			});
 		}
-	}, [data]);
+	}, [categoryStatistics]);
 
 	let content = <Doughnut data={chartData} />;
-
 	if (loading) {
 		content = <Spinner />;
-	} else if (!data?.categoryStatistics?.length) {
+	} else if (!categoryStatistics?.length) {
 		return null;
 	}
 
