@@ -11,11 +11,14 @@ import HomeSkeleton from "./components/skeletons/HomeSkeleton";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PersistLogin from "./routes/PersistLogin";
 
-import { useAuth } from "./hooks/useAuth";
+import { useGetAuthenticatedUser } from "./hooks/useUserQuery";
 
 function App() {
-	const { loading, authUser } = useAuth();
-	if (loading) return <HomeSkeleton />;
+	const { authUser, loading } = useGetAuthenticatedUser();
+	if (loading) {
+		return <HomeSkeleton />;
+	}
+
 	return (
 		<>
 			{authUser && <Header />}
