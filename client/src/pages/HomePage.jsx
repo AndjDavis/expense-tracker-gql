@@ -6,11 +6,11 @@ import Cards from "../components/Cards";
 import Spinner from "../components/Spinner";
 import TransactionForm from "../components/TransactionForm";
 
-import { useGetAuthenticatedUser } from "../hooks/useUserQuery";
 import { useLogout } from "../hooks/useUserMutation";
+import { useAuthUserCache } from "../hooks/useCache";
 
 const HomePage = () => {
-	const { authUser } = useGetAuthenticatedUser();
+	const { authUser } = useAuthUserCache();
 	const { logout, loading, client } = useLogout();
 
 	const handleLogout = async () => {
@@ -32,6 +32,7 @@ const HomePage = () => {
 		/>
 	);
 
+	const chart = !loading && <DoughnutChart />
 	const userProfileUrl = authUser?.profilePicture || "";
 
 	return (
@@ -49,7 +50,7 @@ const HomePage = () => {
 					{logoutButton}
 				</div>
 				<div className="flex flex-wrap w-full justify-center items-center gap-6">
-					<DoughnutChart />
+					{chart}
 					<TransactionForm />
 				</div>
 				<Cards />
