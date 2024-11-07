@@ -1,33 +1,23 @@
 import { gql } from "@apollo/client";
+import { CORE_USER_FIELDS, CORE_TRANSACTION_FIELDS } from "../fragments";
 
 export const GET_TRANSACTIONS = gql`
+	${CORE_TRANSACTION_FIELDS}
 	query GetTransactions {
 		transactions {
-			_id
-			description
-			paymentType
-			category
-			amount
-			location
-			date
+			...CoreTransactionFields
 		}
 	}
 `;
 
 export const GET_TRANSACTION = gql`
+	${CORE_TRANSACTION_FIELDS}
+	${CORE_USER_FIELDS}
 	query GetTransaction($transactionId: ID!) {
 		transaction(transactionId: $transactionId) {
-			_id
-			description
-			paymentType
-			category
-			amount
-			location
-			date
+			...CoreTransactionFields
 			user {
-				name
-				username
-				profilePicture
+				...CoreUserFields
 			}
 		}
 	}

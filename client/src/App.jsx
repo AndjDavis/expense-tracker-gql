@@ -1,13 +1,15 @@
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
-import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
+
+import HomePage from "./pages/HomePage";
 import TransactionPage from "./pages/TransactionPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Header from "./components/ui/Header";
 import HomeSkeleton from "./components/skeletons/HomeSkeleton";
+
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PersistLogin from "./routes/PersistLogin";
 

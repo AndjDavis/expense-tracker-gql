@@ -1,32 +1,26 @@
 import { gql } from "@apollo/client";
+import { CORE_USER_FIELDS, CORE_TRANSACTION_FIELDS } from "../fragments";
 
 export const GET_AUTHENTICATED_USER = gql`
+	${CORE_USER_FIELDS}
 	query GetAuthenticatedUser {
 		authUser {
-			_id
-			username
-			name
+			...CoreUserFields
 			profilePicture
 		}
 	}
 `;
 
 export const GET_USER_AND_TRANSACTIONS = gql`
+	${CORE_USER_FIELDS}
+	${CORE_TRANSACTION_FIELDS}
 	query GetUserAndTransactions {
 		authUser {
-			_id
-			name
-			username
+			...CoreUserFields
 			profilePicture
 			# relationships
 			transactions {
-				_id
-				description
-				paymentType
-				category
-				amount
-				location
-				date
+				...CoreTransactionFields
 			}
 		}
 	}
