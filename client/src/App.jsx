@@ -25,7 +25,7 @@ function App() {
 		<>
 			{authUser && <Header />}
 			<Routes>
-				<Route element={<PersistLogin authUser={authUser} />}>
+				<Route element={<PersistLogin />}>
 					<Route
 						path="/login"
 						element={<LoginPage />}
@@ -35,7 +35,7 @@ function App() {
 						element={<SignUpPage />}
 					/>
 				</Route>
-				<Route element={<ProtectedRoute authUser={authUser} />}>
+				<Route element={<ProtectedRoute />}>
 					<Route
 						path="/"
 						element={<HomePage />}

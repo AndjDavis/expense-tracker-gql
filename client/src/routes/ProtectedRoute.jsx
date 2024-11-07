@@ -1,7 +1,10 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuthUserCache } from "../hooks/useCache";
 
-const ProtectedRoute = ({ authUser }) => {
+const ProtectedRoute = () => {
 	const location = useLocation();
+	const { authUser } = useAuthUserCache();
+
 	let content = <Outlet />;
 
 	if (!authUser) {

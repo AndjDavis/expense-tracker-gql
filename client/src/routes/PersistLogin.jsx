@@ -1,15 +1,16 @@
-import React from 'react'
+import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
+import { useAuthUserCache } from "../hooks/useCache";
 
-const PersistLogin = ({ authUser }) => {
-    let content = <Outlet />
-    if (authUser) {
-        content = (
-            <Navigate to="/" />
-        )
-    }
+const PersistLogin = () => {
+	const { authUser } = useAuthUserCache();
 
-    return content;
-}
+	let content = <Outlet />;
+	if (authUser) {
+		content = <Navigate to="/" />;
+	}
+
+	return content;
+};
 
 export default PersistLogin;
